@@ -135,7 +135,7 @@ void Server::do_session(
 }
 Server::Server() {
   auto const address = net::ip::make_address("127.0.0.1");
-  int port = 8080;
+  const uint port = 8080;
 
   // Launch updating suggestions.json
   std::thread{&Server::update_collections, this}.detach();
