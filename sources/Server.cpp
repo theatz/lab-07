@@ -1,4 +1,4 @@
-//
+// "Copyright [year] <Copyright Owner>"
 // Created by mrbgn on 3/22/21.
 //
 #include <Server.hpp>
@@ -16,7 +16,8 @@ void Server::handle_request(
   auto const bad_request =
       [&req](beast::string_view why)
       {
-        http::response<http::string_body> res{http::status::bad_request, req.version()};
+        http::response<http::string_body> res{http::status::bad_request,
+                                          req.version()};
         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
@@ -29,7 +30,8 @@ void Server::handle_request(
   auto const server_error =
       [&req](beast::string_view what)
       {
-        http::response<http::string_body> res{http::status::internal_server_error, req.version()};
+        http::response<http::string_body>
+            res{http::status::internal_server_error, req.version()};
         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
@@ -39,12 +41,12 @@ void Server::handle_request(
       };
 
   // Make sure we can handle the method
-  if( req.method() != http::verb::post &&
+  if ( req.method() != http::verb::post &&
       req.target() != "v1/api/suggest")
     return send(bad_request("Unknown HTTP-method"));
 
   // Request path must be absolute and not contain "..".
-  if( req.target().empty() ||
+  if ( req.target().empty() ||
       req.target()[0] != '/' ||
       req.target().find("..") != beast::string_view::npos)
     return send(bad_request("Illegal request-target"));
@@ -56,7 +58,7 @@ void Server::handle_request(
 
   http::string_body::value_type body;
   // Handle an unknown error
-  if(ec)
+  if (ec)
     return send(server_error(ec.message()));
 
   std::string id = req.body().substr(req.body().find(":") + 1);
@@ -104,21 +106,21 @@ void Server::do_session(
   // This lambda is used to send messages
   send_lambda<tcp::socket> lambda{socket, close, ec};
 
-  for(;;)
+  for( ;;)
   {
     // Read a request
     http::request<http::string_body> req;
     http::read(socket, buffer, req, ec);
-    if(ec == http::error::end_of_stream)
+    if (ec == http::error::end_of_stream)
       break;
-    if(ec)
+    if (ec)
       return fail(ec, "read");
 
     // Send the response
     handle_request(std::move(req), lambda);
-    if(ec)
+    if (ec)
       return fail(ec, "write");
-    if(close)
+    if (close)
     {
       // This means we should close the connection, usually because
       // the response indicated the "Connection: close" semantic.
@@ -143,7 +145,7 @@ Server::Server() {
 
   // The acceptor receives incoming connections
   tcp::acceptor acceptor{ioc, {address, port}};
-  for(;;)
+  for (;;)
   {
     // This will receive the new connection
     tcp::socket socket{ioc};
@@ -175,7 +177,8 @@ void Server::update_collections() {
   }
 }
 void Server::sort_collection(){
-  std::vector<std::pair<std::pair<std::string, std::string>,  uint32_t>> sort_vec;
+  std::vector<std::pair<std::pair<std::string, std::string>,  uint32_t>>
+      sort_vec;
   for (auto js : _js)
   {
       sort_vec.push_back({{js["id"], js["name"]},js["cost"]});

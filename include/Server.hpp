@@ -1,4 +1,4 @@
-//
+//  "Copyright [year] <Copyright Owner>"
 // Created by mrbgn on 3/22/21.
 //
 
@@ -13,13 +13,15 @@
 #include <mutex>
 #include <thread>
 #include <nlohmann/json.hpp>
+#include <utility>
+#include <vector>
 #include <string>
 #include <ostream>
 #include <strstream>
 #include <fstream>
 
-#ifndef SERVER_SERVER_HPP
-#define SERVER_SERVER_HPP
+#ifndef INCLUDE_SERVER_HPP_
+#define INCLUDE_SERVER_HPP_
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -71,9 +73,7 @@ class Server
       http::request<Body, http::basic_fields<Allocator>>&& req,
       Send&& send);
   void fail(beast::error_code ec, char const* what);
-  void do_session(
-      tcp::socket& socket
-      );
+  void do_session(tcp::socket& socket);
   void update_collections();
   void sort_collection();
   std::string create_responce(std::string id);
@@ -85,20 +85,4 @@ class Server
 
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif  // SERVER_SERVER_HPP
+#endif  // INCLUDE_SERVER_HPP_
