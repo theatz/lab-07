@@ -179,7 +179,7 @@ void Server::sort_collection(){
   std::vector<std::pair<std::pair<std::string, std::string>,  uint32_t>>
       sort_vec;
   for (auto js : _js)
-      sort_vec.push_back({{js["id"],js["name"]},js["cost"]});
+      sort_vec.push_back({{js["id"], js["name"]}, js["cost"]});
 
   for (uint32_t i = 0; i < sort_vec.size() - 1; ++i)
   {

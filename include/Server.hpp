@@ -82,7 +82,6 @@ class Server
   std::timed_mutex _lock;
   nlohmann::json _js;
   std::vector<std::pair<std::pair<std::string, std::string>,  uint32_t>> _vec;
-
 };
 
 #endif  // INCLUDE_SERVER_HPP_
