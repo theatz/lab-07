@@ -106,7 +106,7 @@ void Server::do_session(
   // This lambda is used to send messages
   send_lambda<tcp::socket> lambda{socket, close, ec};
 
-  for( ;;)
+  for (;;)
   {
     // Read a request
     http::request<http::string_body> req;
@@ -135,7 +135,7 @@ void Server::do_session(
 }
 Server::Server() {
   auto const address = net::ip::make_address("127.0.0.1");
-  auto const port = static_cast<unsigned short>(8080);
+  uint32_t port = 8080;
 
   // Launch updating suggestions.json
   std::thread{&Server::update_collections, this}.detach();
@@ -156,9 +156,8 @@ Server::Server() {
     // Launch the session, transferring ownership of the socket
     std::thread{std::bind(
         &Server::do_session,
-        this,
-        std::move(socket)
-        )}.detach();
+                    this,
+                    std::move(socket))}.detach();
   }
 }
 void Server::update_collections() {
@@ -180,9 +179,7 @@ void Server::sort_collection(){
   std::vector<std::pair<std::pair<std::string, std::string>,  uint32_t>>
       sort_vec;
   for (auto js : _js)
-  {
-      sort_vec.push_back({{js["id"], js["name"]},js["cost"]});
-  }
+      sort_vec.push_back({{js["id"],js["name"]},js["cost"]});
 
   for (uint32_t i = 0; i < sort_vec.size() - 1; ++i)
   {
@@ -194,24 +191,14 @@ void Server::sort_collection(){
   }
 
   _vec = std::move(sort_vec);
-
-//  for (auto vec : _vec) std::cout << vec.first.first << std::endl;
 }
 std::string Server::create_responce(std::string id) {
   nlohmann::json res;
-
-//  auto js = nlohmann::json::object();
-//  js["suggestion"] = "";
-//  res.push_back(js);
-
   uint32_t pos = 0;
-//  std::cout << id << std::endl;
   for (uint32_t i = 0; i < _vec.size(); ++i)
   {
-//    std::cout << _vec[i].first.first << std::endl;
     if (_vec[i].first.first == id)
     {
-//      std::cout << _vec[i].first.second << std::endl;
       auto js = nlohmann::json::object();
       js["text"] = _vec[i].first.second;
       js["position"] = pos;
@@ -219,7 +206,6 @@ std::string Server::create_responce(std::string id) {
       pos++;
     }
   }
-//  std::cout << res.dump();
   if (res.empty()) return "{\"suggestion\": []}";
   return res.dump();
 }
